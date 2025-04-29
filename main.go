@@ -86,12 +86,13 @@ func (s *NtripServer) Start() error {
 
 	// Start TCP server
 	var err error
-	s.listener, err = net.Listen("tcp", fmt.Sprintf(":%d", s.port))
+	bindAddr := fmt.Sprintf("%s:%d", s.config.Server.Host, s.port)
+	s.listener, err = net.Listen("tcp", bindAddr)
 	if err != nil {
 		return fmt.Errorf("failed to start server: %v", err)
 	}
 
-	log.Printf("NTRIP server started on port %d", s.port)
+	log.Printf("NTRIP server started on %s", bindAddr)
 
 	// Start reading from serial port
 	go s.readSerialData()

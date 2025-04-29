@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -331,6 +332,7 @@ func startClient() {
 	}
 
 	clientCmd = exec.Command("go", args...)
+	clientCmd.Stderr = os.Stderr
 	
 	// Create a pipe to capture output
 	stdout, err := clientCmd.StdoutPipe()
@@ -385,7 +387,7 @@ func stopClient() {
 	}
 
 	addMessage("Client stopped successfully")
-	
+
 	mutex.Lock()
 	clientCmd = nil
 	pageData.Status = "Client stopped"

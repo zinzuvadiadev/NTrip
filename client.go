@@ -97,6 +97,7 @@ func (c *NtripClient) Connect() error {
 		}
 
 		// Output RTCM data to stdout for web interface
+		fmt.Println("RTCM chunk received")
 		os.Stdout.Write(rtcmBuffer[:n])
 
 		// Log the data size for monitoring
