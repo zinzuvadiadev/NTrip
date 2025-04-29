@@ -49,9 +49,39 @@ func NewNtripServer(config Config) *NtripServer {
 	}
 }
 
+// checkPort checks if a serial port exists and is accessible
+func checkPort(port string) bool {
+	_, err := os.Stat(port)
+	return err == nil
+}
+
+// findActivePort tries to find an active USB port from usb0 to usb3
+func findActivePort() (string, error) {
+	ports := []string{"/dev/ttyUSB0", "/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"}
+	
+	for _, port := range ports {
+		if checkPort(port) {
+			log.Printf("Found active port: %s", port)
+			return port, nil
+		}
+	}
+	
+	return "", fmt.Errorf("no active USB port found")
+}
+
 func (s *NtripServer) initSerial() error {
+	// Try to find an active port if not specified in config
+	port := s.config.Serial.Port
+	if port == "" {
+		var err error
+		port, err = findActivePort()
+		if err != nil {
+			return err
+		}
+	}
+
 	c := &serial.Config{
-		Name:     s.config.Serial.Port,
+		Name:     port,
 		Baud:     s.config.Serial.BaudRate,
 		Size:     byte(s.config.Serial.DataBits),
 		StopBits: serial.StopBits(s.config.Serial.StopBits),
@@ -71,10 +101,10 @@ func (s *NtripServer) initSerial() error {
 	var err error
 	s.serial, err = serial.OpenPort(c)
 	if err != nil {
-		return fmt.Errorf("failed to open serial port: %v", err)
+		return fmt.Errorf("failed to open serial port %s: %v", port, err)
 	}
 
-	log.Printf("Serial port %s opened at %d baud", s.config.Serial.Port, s.config.Serial.BaudRate)
+	log.Printf("Serial port %s opened at %d baud", port, s.config.Serial.BaudRate)
 	return nil
 }
 

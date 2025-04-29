@@ -1,10 +1,10 @@
 server:
   port: 2101
-  host: "192.168.1.100"
+  host: "0.0.0.0"
   timeout: 30  # seconds
 
 serial:
-  port: "/dev/ttyUSB0"  # Adjust this to match your device
+  port: ""  # Leave empty to auto-detect
   baud_rate: 115200
   data_bits: 8
   stop_bits: 1
