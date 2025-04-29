@@ -1,0 +1,26 @@
+server:
+  port: 2101
+  host: "0.0.0.0"
+  timeout: 30  # seconds
+
+serial:
+  port: "/dev/ttyUSB0"  # Adjust this to match your device
+  baud_rate: 115200
+  data_bits: 8
+  stop_bits: 1
+  parity: "N"
+
+authentication:
+  enabled: false
+  username: "user"
+  password: "pass"
+
+mountpoints:
+  - name: "RTCM3"
+    description: "RTCM 3.x corrections"
+    enabled: true
+    source: "serial"  # Changed to serial since we're reading from device
+
+logging:
+  level: "info"
+  file: "ntrip.log" 
